@@ -4,7 +4,9 @@ A pre-commit hook that replaces values for specified keys in JSON files.
 
 ## Overview
 
-This tool helps manage environment-specific values in JSON files within your Git repository. It automatically replaces values when committing to the repository and restores them when checking out, making it easier to work with configuration files that need different values in different environments.
+This tool helps manage environment-specific values in JSON files within your Git repository. It automatically replaces
+values when committing to the repository and restores them when checking out, making it easier to work with
+configuration files that need different values in different environments.
 
 ## Use Cases
 
@@ -19,12 +21,6 @@ This tool helps manage environment-specific values in JSON files within your Git
 - Python 3.8 or higher
 - [pre-commit](https://pre-commit.com/) installed in your repository
 
-### Install via pip
-
-```bash
-pip install pre-commit-json-replace
-```
-
 ### Add to your pre-commit configuration
 
 Add the following to your `.pre-commit-config.yaml` file:
@@ -36,6 +32,12 @@ repos:
     hooks:
       - id: json-replace-to-committed
       - id: json-replace-to-working
+```
+
+and run
+
+```bash
+pre-commit install --hook-type pre-commit --hook-type post-commit --hook-type post-checkout --hook-type post-merge
 ```
 
 ## Configuration
