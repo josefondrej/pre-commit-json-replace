@@ -12,9 +12,16 @@ patterns:
         committed: "Msi"
     indent: 4
 
+  - path: "**/*Outputs/**/*.json"
+    keys:
+      - key: "BlobStorageProperties.AuthenticationMode"
+        working: "ConnectionString"
+        committed: "Msi"
+    indent: 4
+
   - path: "**/JobConfig.json"
     keys:
       - key: "GlobalStorage.AuthenticationMode"
         working: "ConnectionString"
         committed: "Msi"
-    indent: 2
+    indent: 4
