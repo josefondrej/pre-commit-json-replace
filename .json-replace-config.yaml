@@ -10,9 +10,11 @@ patterns:
       - key: "SqlReferenceProperties.AuthenticationMode"
         working: "ConnectionString"
         committed: "Msi"
+    indent: 4
 
   - path: "**/JobConfig.json"
     keys:
       - key: "GlobalStorage.AuthenticationMode"
         working: "ConnectionString"
         committed: "Msi"
+    indent: 2

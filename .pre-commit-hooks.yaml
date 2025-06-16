@@ -1,7 +1,7 @@
 - id: json-replace-to-committed
   name: Apply json-replace utility to get repository in ready to commit state
   description: Find json files and apply replacements according to the configuration
-  entry: apply-regex --direction to_committed --config=.pre-commit-json-replace-config.yaml
+  entry: json-replace --direction to_committed --config=.json-replace-config.yaml
   language: python
   pass_filenames: false
   always_run: true
@@ -9,7 +9,7 @@
 - id: json-replace-to-working
   name: Apply json-replace utility to get repository in working state
   description: Find json files and apply replacements according to the configuration
-  entry: apply-regex --direction to_working --config=.pre-commit-json-replace-config.yaml
+  entry: json-replace --direction to_working --config=.json-replace-config.yaml
   language: python
   stages: [ post-commit, post-checkout, post-merge ]
   pass_filenames: false

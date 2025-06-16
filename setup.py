@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name="pre-commit-regex",
     version="0.1.0",
-    py_modules=["apply_regex"],
+    py_modules=["json_replace"],
     install_requires=[
         "pyyaml",
     ],
