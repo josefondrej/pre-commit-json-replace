@@ -31,7 +31,7 @@ Add the following to your `.pre-commit-config.yaml` file:
 
 ```yaml
 repos:
-  - repo: https://github.com/username/pre-commit-json-replace
+  - repo: https://github.com/josefondrej/pre-commit-json-replace
     rev: v0.1.0  # Use the latest version
     hooks:
       - id: json-replace-to-committed
