@@ -1,15 +1,27 @@
 #!/usr/bin/env python3
+"""
+JSON Replace Pre-commit Hook.
+
+This module provides functionality to replace values in JSON files based on a configuration.
+It can be used as a pre-commit hook to modify JSON files before committing them to a repository,
+and to restore the original values after checkout.
+"""
 
 import argparse
 import json
-import os
 import glob
+import sys
+from typing import Dict, List, Any, Optional, Union, Tuple
 import yaml
-from pathlib import Path
 
 
-def parse_args():
-    """Parse command line arguments."""
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments.
+
+    Returns:
+        argparse.Namespace: The parsed command line arguments.
+            Contains 'direction' (str) and 'config' (str) attributes.
+    """
     parser = argparse.ArgumentParser(description='Replace values in JSON files')
     parser.add_argument('--direction', choices=['to_committed', 'to_working'],
                         required=True, help='Direction of replacement')
@@ -17,27 +29,69 @@ def parse_args():
     return parser.parse_args()
 
 
-def load_config(config_path):
-    """Load configuration from YAML file."""
-    with open(config_path, 'r') as f:
-        return yaml.safe_load(f)
+def load_config(config_path: str) -> Dict[str, Any]:
+    """Load configuration from YAML file.
+
+    Args:
+        config_path: Path to the YAML configuration file.
+
+    Returns:
+        Dict containing the parsed YAML configuration.
+
+    Raises:
+        FileNotFoundError: If the configuration file is not found.
+        yaml.YAMLError: If the configuration file is not valid YAML.
+    """
+    try:
+        with open(config_path, 'r', encoding='utf-8') as f:
+            return yaml.safe_load(f)
+    except FileNotFoundError:
+        print(f"Error: Configuration file '{config_path}' not found")
+        sys.exit(1)
+    except yaml.YAMLError as e:
+        print(f"Error: Invalid YAML in configuration file '{config_path}': {e}")
+        sys.exit(1)
 
 
-def find_json_files(pattern):
-    """Find JSON files matching the given pattern."""
+def find_json_files(pattern: str) -> List[str]:
+    """Find JSON files matching the given pattern.
+
+    Args:
+        pattern: Glob pattern to match JSON files.
+
+    Returns:
+        List of paths to matching JSON files.
+    """
     return glob.glob(pattern, recursive=True)
 
 
-def replace_in_json(file_path, keys, direction, indent=2):
-    """Replace values in a JSON file according to the direction."""
+def replace_in_json(file_path: str, keys: List[Dict[str, str]], direction: str, indent: int = 2) -> bool:
+    """Replace values in a JSON file according to the direction.
+
+    Args:
+        file_path: Path to the JSON file to modify.
+        keys: List of key configurations, each containing 'key', 'working', and 'committed' values.
+        direction: Direction of replacement, either 'to_committed' or 'to_working'.
+        indent: Number of spaces for indentation in the output JSON file.
+
+    Returns:
+        True if the file was modified, False otherwise.
+
+    Raises:
+        json.JSONDecodeError: If the file is not valid JSON (handled internally).
+        FileNotFoundError: If the file is not found (handled internally).
+    """
     try:
-        with open(file_path, 'r') as f:
+        with open(file_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
     except json.JSONDecodeError:
         print(f"Error: {file_path} is not a valid JSON file")
         return False
     except FileNotFoundError:
         print(f"Error: {file_path} not found")
+        return False
+    except Exception as e:
+        print(f"Error reading {file_path}: {e}")
         return False
 
     modified = False
@@ -63,15 +117,27 @@ def replace_in_json(file_path, keys, direction, indent=2):
                 current = current[part]
 
     if modified:
-        with open(file_path, 'w') as f:
-            json.dump(data, f, indent=indent)
-        print(f"Modified: {file_path}")
+        try:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, indent=indent)
+            print(f"Modified: {file_path}")
+        except Exception as e:
+            print(f"Error writing to {file_path}: {e}")
+            return False
 
     return modified
 
 
-def process_files(config, direction):
-    """Process all files according to the configuration."""
+def process_files(config: Dict[str, Any], direction: str) -> int:
+    """Process all files according to the configuration.
+
+    Args:
+        config: Configuration dictionary loaded from YAML.
+        direction: Direction of replacement, either 'to_committed' or 'to_working'.
+
+    Returns:
+        Number of files that were modified.
+    """
     modified_files = 0
 
     for pattern_config in config.get('patterns', []):
@@ -86,8 +152,12 @@ def process_files(config, direction):
     return modified_files
 
 
-def main():
-    """Main entry point."""
+def main() -> int:
+    """Main entry point.
+
+    Returns:
+        Exit code (0 for success, non-zero for failure).
+    """
     args = parse_args()
     config = load_config(args.config)
     modified_files = process_files(config, args.direction)
@@ -96,4 +166,4 @@ def main():
 
 
 if __name__ == "__main__":
-    exit(main())
+    sys.exit(main())
