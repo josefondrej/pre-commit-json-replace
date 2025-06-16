@@ -1,0 +1,18 @@
+patterns:
+  - path: "**/*Inputs/**/*.json"
+    keys:
+      - key: "BlobReferenceProperties.AuthenticationMode"
+        working: "ConnectionString"
+        committed: "Msi"
+      - key: "EventHubProperties.AuthenticationMode"
+        working: "ConnectionString"
+        committed: "Msi"
+      - key: "SqlReferenceProperties.AuthenticationMode"
+        working: "ConnectionString"
+        committed: "Msi"
+
+  - path: "**/JobConfig.json"
+    keys:
+      - key: "GlobalStorage.AuthenticationMode"
+        working: "ConnectionString"
+        committed: "Msi"
